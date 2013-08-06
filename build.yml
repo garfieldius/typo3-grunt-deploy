@@ -1,0 +1,85 @@
+clean:
+  build: ["<%= targetPath %>"]
+
+uglify:
+  options:
+    compress:
+      global_defs:
+        DEBUG: false
+      dead_code: true
+  build:
+    files:
+      -
+        dest: '<%= targetPath %>/scripts.<%= buildId %>.js'
+        src:
+          - '<%= assetsPath %>/Javascript/jquery.js'
+          - '<%= assetsPath %>/Javascript/bootstrap.js'
+
+recess:
+  options:
+    compile: true
+  build:
+    options:
+      compress: true
+    files:
+      -
+        dest: '<%= targetPath %>/styles.<%= buildId %>.css'
+        src:
+          - '<%= lessFile %>'
+
+compress:
+  build:
+    options:
+      level: 9
+      mode: gzip
+    files:
+      -
+        expand: true
+        flatten: true
+        cwd: '<%= targetPath %>'
+        src: ['*.css']
+        dest: '<%= targetPath %>/'
+        ext: '.<%= buildId %>.css.gz'
+      -
+        expand: true
+        flatten: true
+        cwd: '<%= targetPath %>'
+        src: ['*.js']
+        dest: '<%= targetPath %>/'
+        ext: '.<%= buildId %>.js.gz'
+  deploy:
+    options:
+      mode: 'tgz'
+      archive: 'current.tgz'
+    files: []
+
+sftp:
+  deploy:
+    files:
+      -
+        src: 'current.tgz'
+        dist: 'current.tgz'
+    options:
+      createDirectories: true
+      path: '/tmp/current/'
+      host: '<%= ssh.host %>'
+      username: '<%= ssh.username %>'
+      privateKey: '<%= ssh.privateKey %>'
+      passphrase: '<%= ssh.passphrase %>'
+
+sshexec:
+  options:
+    host: '<%= ssh.host %>'
+    username: '<%= ssh.username %>'
+    privateKey: '<%= ssh.privateKey %>'
+    passphrase: '<%= ssh.passphrase %>'
+  unpack:
+    command: 'cd /tmp/current && tar xzf current.tgz && rm current.tgz'
+  replace:
+    command: 'mv <%= deploy.remoteTarget %>/typo3conf/ext <%= deploy.remoteTarget %>/typo3conf/ext_`date +%Y-%m-%d_%H-%M-%S` && mv /tmp/current <%= deploy.remoteTarget %>/typo3conf/ext'
+  tempcached:
+    command: 'rm -rf <%= deploy.remoteTarget %>/typo3temp/Cache/Code/cache_core'
+  dbtables:
+    command: '<%= deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase databaseapi:databasecompare 1,2,3,4,5,7'
+  clearcaches:
+    command: '<%= deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase cacheapi:clearallexceptpagecache'

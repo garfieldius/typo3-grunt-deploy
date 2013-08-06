@@ -1,0 +1,39 @@
+assetsPath: "theme_mytheme/Resources/Public/"
+targetPath: "theme_mytheme/Resources/Public/Production"
+
+lessFile: "theme_mytheme/Resources/Private/Less/_Main.less"
+
+# Relative to assetsPath
+jsFiles:
+  - "Javascript/jquery.js"
+  - "Javascript/bootstrap.js"
+
+# Where to add the links to the generated
+typoscriptFile: "theme_mytheme/Configuration/Typoscript/Production/setup.txt"
+
+deploy:
+  # TYPO3 root folder
+  remoteTarget: "/var/www/public_html"
+  # Files and folders in the typo3conf/ext folder, excluded from deployment
+  exclude: 
+    - ".git" 
+    - ".gitignore" 
+    - ".gitmodules" 
+    - "package.json" 
+    - "Gruntfile.js" 
+    - "node_modules" 
+    - "phpunit" 
+    - "extension_builder" 
+    - "extension_uploader" 
+    - "phpstorm" 
+    - "devlog" 
+    - "behat" 
+    - "extdeveval" 
+
+
+ssh:
+  host: "domain.tld"
+  username: "user"
+  password: "password"
+  passphrase: ""
+  privateKeyFile: "<%= HOME %>/.ssh/id_rsa"
