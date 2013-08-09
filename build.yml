@@ -54,18 +54,18 @@ compress:
     files: []
 
 sftp:
+  options:
+    createDirectories: true
+    path: '/tmp/current/'
+    host: '<%= ssh.host %>'
+    username: '<%= ssh.username %>'
+    privateKey: '<%= ssh.privateKey %>'
+    passphrase: '<%= ssh.passphrase %>'
   deploy:
     files:
       -
         src: 'current.tgz'
         dist: 'current.tgz'
-    options:
-      createDirectories: true
-      path: '/tmp/current/'
-      host: '<%= ssh.host %>'
-      username: '<%= ssh.username %>'
-      privateKey: '<%= ssh.privateKey %>'
-      passphrase: '<%= ssh.passphrase %>'
 
 sshexec:
   options:

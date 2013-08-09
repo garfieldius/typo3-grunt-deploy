@@ -26,7 +26,7 @@ The first task, the default task, is an alias for several *sub*-tasks, which do 
 
 1. Clean up by removing previous builds
 2. Minify and concatenate Javascript files using [UglifyJS](http://github.com/mishoo/UglifyJS2)
-3. Build and compress a CSS file from a less source using [recess](https://github.com/twitter/recess)
+3. Build and compress a CSS file from a [less](http://lesscss.org) source using [recess](https://github.com/twitter/recess)
 4. Generate pre-compressed versions of the result of the two aforementioned tasks
 5. Update a typoscript file to use the newly generated assets. A sample of how this Typoscript may look like is available in the *setup.ts* file.
 
@@ -36,7 +36,7 @@ All settings that may need to be adjusted, as set as properties in the *props.ym
 
 Example:
 
-    env ÈNVIRONMENT=dev BUILDNUMBER=4 grunt
+    env ENVIRONMENT=dev BUILDNUMBER=4 grunt
 
 Results in
 
@@ -69,11 +69,27 @@ It runs all the tasks of the default tasks and deploys the result onto a remote 
 2. Copy the tar into the /tmp/ folder of a remote host
 3. Unpack that tgz
 4. Backup the existing ext folder and move fresh one into it's place
-5. Remove the caching folder *typo3temp/Cache/Code/core_cache* of the target installation. Otherwise a fatal error will be generated if an extension was removed or heavily refactored
+5. Remove the caching folder *typo3temp/Cache/Code/core_cache* of the target installation. Otherwise a fatal error will be generated if an extension was heavily refactored or even removed. 
 6. Run the [coreapi](https://github.com/etobi/ext-coreapi) task "dbcompare" to have the latest DB schema in place
-7. Run the coreapi task *clearallcachesexceptpagecache*
+7. Run the [coreapi](https://github.com/etobi/ext-coreapi) task *clearallcachesexceptpagecache*
 8. Go back to the local installation and reset the typoscript changed in step 5 of the default task. This way git won't complain about changed files if you deploy from your local machine
 
 ## TODO
 
 * Add PHP specific tasks like running phpunit and behat tests or a code sniffer
+
+## License
+
+Provided under the [BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause)
+
+Copyright (c) 2013, Georg Großberger
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. Neither the name of Georg Großberger nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+

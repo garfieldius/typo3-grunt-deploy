@@ -1,3 +1,11 @@
+/*                                                      *
+ * (c) 2013 Georg Großberger                            *
+ *                                                      *
+ * This is free software, you can use it freely under   *
+ * the terms of the BSD 3-Clause License                *
+ * for details, please visit                            *
+ * http://opensource.org/licenses/BSD-3-Clause          *
+ *                                                      */
 
 module.exports = function(grunt) {
 	"use strict";
@@ -8,12 +16,14 @@ module.exports = function(grunt) {
 	var properties = grunt.file.readYAML("props.yml");
 	var env = process.env;
 
+	// If an env is set, try to merge "local" properties
 	if (env.ENVIRONMENT) {
 		var overrideProperties = "props."+ env.ENVIRONMENT + ".yml";
 		if (grunt.file.exists(overrideProperties)) {
 			properties = mergeObjects(properties, grunt.file.readYAML(overrideProperties));
 		}
 	} else {
+		// Otherwise we assume production
 		env.ENVIRONMENT = "Production";
 	}
 
@@ -32,8 +42,9 @@ module.exports = function(grunt) {
 	var privateKeyFile = properties.ssh.privateKeyFile;
 	if (privateKeyFile) {
 		privateKeyFile = grunt.template.process(privateKeyFile, {data: {home: process.env.HOME}});
-		config.sftp.deploy.options.privateKey = grunt.file.read(privateKeyFile);
+		config.sftp.options.privateKey = grunt.file.read(privateKeyFile);
 		config.sshexec.options.privateKey = grunt.file.read(privateKeyFile);
+		delete properties.ssh.privateKeyFile;
 	}
 
 	// Collect files for deployment
