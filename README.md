@@ -1,4 +1,4 @@
-# GruntJS configuration for a TYPO3 deployment
+# GruntJS TYPO3 Deployment
 
 This is a sample grunt configuration that can be used for building and deploying a TYPO3 project. It has been developed, assuming a [modernpackage](http://github.com/georgringer/modernpackage) setup.
 
@@ -7,7 +7,8 @@ This is a sample grunt configuration that can be used for building and deploying
 1. Make sure node and the *grunt-cli* package is installed by running `npm install -g grunt-cli`
 2. Copy all the files in this repository (except for this README of course) into the *typo3conf/ext* folder
 3. Run `npm install` to install all the dependencies
-4. (Optional but recommended) Add the folder *node_modules* and the file *npm-debug.log* to your .gitignore
+4. Adapt the props.yml file to your needs.
+5. (Optional but recommended) Add the folder *node_modules* and the file *npm-debug.log* to your .gitignore
 
 ## Usage
 
@@ -38,26 +39,46 @@ Example:
 
     env ENVIRONMENT=dev BUILDNUMBER=4 grunt
 
-Results in
+Will try to read *props.yml* and *props.dev.yml*
+
+Example output
 
     Running "clean:build" (clean) task
     Cleaning theme_mytheme/Resources/Public/Production...OK
-    
+
     Running "uglify:build" (uglify) task
     File "theme_mytheme/Resources/Public/Production/scripts.4.js" created.
-    
+
     Running "recess:build" (recess) task
     File "theme_mytheme/Resources/Public/Production/styles.4.css" created.
     Uncompressed size: 60040 bytes.
     Compressed size: 7025 bytes gzipped (47815 bytes minified).
-    
+
     Running "compress:build" (compress) task
     Created theme_mytheme/Resources/Public/Production/styles.4.css.gz (8937 bytes)
     Created theme_mytheme/Resources/Public/Production/scripts.4.js.gz (39654 bytes)
-    
+
     Running "tsconfig" task
-    
+
     Done, without errors.
+
+Inside the build.yml is the build configuration in YAML format for third party tasks, like ssh or UglifyJS. Before grunt is initialized with it, it's values are processed via the grunt template processor. You can the default references like the grunt documentation says, all values in the *props.yml* and all environment variables using *env*.
+
+Example:
+Write the result from UglifyJS to the users home, giving it the users name
+
+```yaml
+
+uglify:
+  '[...]'
+    files:
+      -
+        dest: '<%= env.HOME %>/scripts.<%= env.USER %>.js'
+        src:
+          - '<%= assetsPath %>/Javascript/jquery.js'
+          - '<%= assetsPath %>/Javascript/bootstrap.js'
+
+```
 
 ### Deploying
 
@@ -68,11 +89,11 @@ It runs all the tasks of the default tasks and deploys the result onto a remote 
 1. Create a tgz file with the contents of the *typo3conf/ext* folder. ".git" paths and documentations are always excluded. Additional excludes (in the example development extensions like phpunit or extension builder) can be listed in the props.yml
 2. Copy the tar into the /tmp/ folder of a remote host
 3. Unpack that tgz
-4. Backup the existing ext folder and move fresh one into it's place
-5. Remove the caching folder *typo3temp/Cache/Code/core_cache* of the target installation. Otherwise a fatal error will be generated if an extension was heavily refactored or even removed. 
+4. Backup the existing ext folder and move the fresh one into it's place
+5. Remove the caching folder *typo3temp/Cache/Code/core_cache* of the target installation. Otherwise a fatal error will be generated if an extension was heavily refactored or even removed.
 6. Run the [coreapi](https://github.com/etobi/ext-coreapi) task "dbcompare" to have the latest DB schema in place
 7. Run the [coreapi](https://github.com/etobi/ext-coreapi) task *clearallcachesexceptpagecache*
-8. Go back to the local installation and reset the typoscript changed in step 5 of the default task. This way git won't complain about changed files if you deploy from your local machine
+8. Go back to the local installation and reset the typoscript changed in step 5 of the default task. This way git won't complain about changed files if you deploy from your local machine.
 
 ## TODO
 

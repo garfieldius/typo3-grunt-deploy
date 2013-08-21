@@ -104,7 +104,7 @@ module.exports = function(grunt) {
 				grunt.fail.fatal("Cannot create target path");
 			}
 		} else if (!grunt.file.isDir(path)) {
-			grunt.fail.fatal("Cannot target path exists, but is no directory");
+			grunt.fail.fatal("Target path exists, but is not a directory");
 		}
 	});
 
