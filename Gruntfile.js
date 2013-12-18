@@ -11,6 +11,7 @@ module.exports = function(grunt) {
 	"use strict";
 
 	var fs = require("fs");
+	var merge = require("merge");
 
 	// Load properties
 	var properties = grunt.file.readYAML("props.yml");
@@ -20,7 +21,7 @@ module.exports = function(grunt) {
 	if (env.ENVIRONMENT) {
 		var overrideProperties = "props."+ env.ENVIRONMENT + ".yml";
 		if (grunt.file.exists(overrideProperties)) {
-			properties = mergeObjects(properties, grunt.file.readYAML(overrideProperties));
+			properties = merge(properties, grunt.file.readYAML(overrideProperties));
 		}
 	} else {
 		// Otherwise we assume production
@@ -136,43 +137,6 @@ module.exports = function(grunt) {
 		grunt.file.write(filename, data);
 	}
 
-	// Merge two objects
-	// From mootools 1.4 (https://github.com/mootools/mootools-core/blob/master/Source/Core/Core.js)
-
-	function mergeObjects(source, k, v) {
-
-		if (typeof k == 'string') {
-			return mergeOne(source, k, v);
-		}
-
-		for (var i = 1, l = arguments.length; i < l; i++) {
-			var object = arguments[i];
-			for (var key in object) {
-				source = mergeOne(source, key, object[key]);
-			}
-		}
-		return source;
-	}
-
-	function mergeOne(source, key, current){
-		switch (typeof current) {
-			case 'object':
-				if (typeof source[key] == 'object') {
-					mergeObjects(source[key], current);
-				} else {
-					source[key] = current;
-				}
-				break;
-
-			case 'array':
-				source[key] = current;
-				break;
-
-			default:
-				source[key] = current;
-		}
-		return source;
-	}
 
 	// Template processing of an object, recursively
 	// From gruntjs (https://github.com/gruntjs/grunt/blob/master/lib/grunt/config.js#L60)
