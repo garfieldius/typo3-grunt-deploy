@@ -14,21 +14,6 @@ typoscriptFile: "theme_mytheme/Configuration/Typoscript/Production/setup.txt"
 deploy:
   # TYPO3 root folder
   remoteTarget: "/var/www/public_html"
-  # Files and folders in the typo3conf/ext folder, excluded from deployment
-  exclude:
-    - ".git"
-    - ".gitignore"
-    - ".gitmodules"
-    - "package.json"
-    - "Gruntfile.js"
-    - "node_modules"
-    - "phpunit"
-    - "extension_builder"
-    - "extension_uploader"
-    - "phpstorm"
-    - "devlog"
-    - "behat"
-    - "extdeveval"
 
 
 ssh:

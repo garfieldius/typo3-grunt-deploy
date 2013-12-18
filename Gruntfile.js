@@ -44,24 +44,6 @@ module.exports = function(grunt) {
 	var config = grunt.file.readYAML("build.yml");
 	config.props = properties;
 
-	// Collect files for deployment
-	config.compress.deploy.files =  fs.readdirSync(".").filter(function(file) {
-		if (grunt.file.isDir(file)) {
-			if (properties.deploy.exclude.indexOf(file) == -1) {
-				return true;
-			}
-		}
-		return false;
-
-	}).map(function(entry) {
-		return {
-			src: [entry + '/**'],
-			filter: function(filepath) {
-				return !/\.git/.test(filepath) && !/Private\/Bootstrap/.test(filepath) && !/\/Documentation\//.test(filepath) && !/\/doc\//.test(filepath);
-			}
-		}
-	});
-
 	// Initialize grunt
 	grunt.config.init(config);
 
