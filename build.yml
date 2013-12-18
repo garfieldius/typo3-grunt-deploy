@@ -1,5 +1,5 @@
 clean:
-  build: ["<%= targetPath %>"]
+  build: ["<%= props.targetPath %>"]
 
 uglify:
   options:
@@ -10,10 +10,10 @@ uglify:
   build:
     files:
       -
-        dest: '<%= targetPath %>/scripts.<%= buildId %>.js'
+        dest: '<%= props.targetPath %>/scripts.<%= props.buildId %>.js'
         src:
-          - '<%= assetsPath %>/Javascript/jquery.js'
-          - '<%= assetsPath %>/Javascript/bootstrap.js'
+          - '<%= props.assetsPath %>/Javascript/jquery.js'
+          - '<%= props.assetsPath %>/Javascript/bootstrap.js'
 
 recess:
   options:
@@ -23,9 +23,9 @@ recess:
       compress: true
     files:
       -
-        dest: '<%= targetPath %>/styles.<%= buildId %>.css'
+        dest: '<%= props.targetPath %>/styles.<%= props.buildId %>.css'
         src:
-          - '<%= lessFile %>'
+          - '<%= props.lessFile %>'
 
 compress:
   build:
@@ -36,17 +36,17 @@ compress:
       -
         expand: true
         flatten: true
-        cwd: '<%= targetPath %>'
+        cwd: '<%= props.targetPath %>'
         src: ['*.css']
-        dest: '<%= targetPath %>/'
-        ext: '.<%= buildId %>.css.gz'
+        dest: '<%= props.targetPath %>/'
+        ext: '.<%= props.buildId %>.css.gz'
       -
         expand: true
         flatten: true
-        cwd: '<%= targetPath %>'
+        cwd: '<%= props.targetPath %>'
         src: ['*.js']
-        dest: '<%= targetPath %>/'
-        ext: '.<%= buildId %>.js.gz'
+        dest: '<%= props.targetPath %>/'
+        ext: '.<%= props.buildId %>.js.gz'
   deploy:
     options:
       mode: 'tgz'
@@ -57,10 +57,10 @@ sftp:
   options:
     createDirectories: true
     path: '/tmp/current/'
-    host: '<%= ssh.host %>'
-    username: '<%= ssh.username %>'
-    privateKey: '<%= ssh.privateKey %>'
-    passphrase: '<%= ssh.passphrase %>'
+    host: '<%= props.ssh.host %>'
+    username: '<%= props.ssh.username %>'
+    privateKey: '<%= props.ssh.privateKey %>'
+    passphrase: '<%= props.ssh.passphrase %>'
   deploy:
     files:
       -
@@ -69,17 +69,17 @@ sftp:
 
 sshexec:
   options:
-    host: '<%= ssh.host %>'
-    username: '<%= ssh.username %>'
-    privateKey: '<%= ssh.privateKey %>'
-    passphrase: '<%= ssh.passphrase %>'
+    host: '<%= props.ssh.host %>'
+    username: '<%= props.ssh.username %>'
+    privateKey: '<%= props.ssh.privateKey %>'
+    passphrase: '<%= props.ssh.passphrase %>'
   unpack:
     command: 'cd /tmp/current && tar xzf current.tgz && rm current.tgz'
   replace:
-    command: 'mv <%= deploy.remoteTarget %>/typo3conf/ext <%= deploy.remoteTarget %>/typo3conf/ext_`date +%Y-%m-%d_%H-%M-%S` && mv /tmp/current <%= deploy.remoteTarget %>/typo3conf/ext'
+    command: 'mv <%= props.deploy.remoteTarget %>/typo3conf/ext <%= props.deploy.remoteTarget %>/typo3conf/ext_`date +%Y-%m-%d_%H-%M-%S` && mv /tmp/current <%= props.deploy.remoteTarget %>/typo3conf/ext'
   tempcached:
-    command: 'rm -rf <%= deploy.remoteTarget %>/typo3temp/Cache/Code/cache_core'
+    command: 'rm -rf <%= props.deploy.remoteTarget %>/typo3temp/Cache/Code/cache_core'
   dbtables:
-    command: '<%= deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase databaseapi:databasecompare 1,2,3,4,5,7'
+    command: '<%= props.deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase databaseapi:databasecompare 1,2,3,4,5,7'
   clearcaches:
-    command: '<%= deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase cacheapi:clearallexceptpagecache'
+    command: '<%= props.deploy.remoteTarget %>/typo3/cli_dispatch.phpsh extbase cacheapi:clearallexceptpagecache'

@@ -28,14 +28,8 @@ module.exports = function(grunt) {
 		env.ENVIRONMENT = "Production";
 	}
 
-	properties.buildId = env.BUILDNUMBER || new Date().getTime();
-	properties = processObject(properties, env);
+	properties.buildId = env.BUILD_NUMBER || env.BUILDNUMBER || new Date().getTime();
 	properties.env = env;
-
-
-	// Load config
-	var config = grunt.file.readYAML("build.yml");
-	config = processObject(config, properties);
 
 	// Process config
 
@@ -43,10 +37,12 @@ module.exports = function(grunt) {
 	var privateKeyFile = properties.ssh.privateKeyFile;
 	if (privateKeyFile) {
 		privateKeyFile = grunt.template.process(privateKeyFile, {data: {home: process.env.HOME}});
-		config.sftp.options.privateKey = grunt.file.read(privateKeyFile);
-		config.sshexec.options.privateKey = grunt.file.read(privateKeyFile);
-		delete properties.ssh.privateKeyFile;
+		properties.ssh.privateKey = grunt.file.read(privateKeyFile);
 	}
+
+	// Load config
+	var config = grunt.file.readYAML("build.yml");
+	config.props = properties;
 
 	// Collect files for deployment
 	config.compress.deploy.files =  fs.readdirSync(".").filter(function(file) {
@@ -135,19 +131,5 @@ module.exports = function(grunt) {
 		data = callback("" + data);
 
 		grunt.file.write(filename, data);
-	}
-
-
-	// Template processing of an object, recursively
-	// From gruntjs (https://github.com/gruntjs/grunt/blob/master/lib/grunt/config.js#L60)
-	function processObject(object, data) {
-		return grunt.util.recurse(object, function(value) {
-
-			if (typeof value !== 'string') {
-				return value;
-			}
-
-			return grunt.template.process(value, {data: data});
-		})
 	}
 };
