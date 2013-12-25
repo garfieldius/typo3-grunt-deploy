@@ -16,10 +16,11 @@ module.exports = function(grunt) {
 	// Load properties
 	var properties = grunt.file.readYAML("props.yml");
 	var env = process.env;
+	var ctx = env.ENVIRONMENT || env.CONTEXT || env.TYPO3_CONTEXT;
 
 	// If an env is set, try to merge "local" properties
-	if (env.ENVIRONMENT) {
-		var overrideProperties = "props."+ env.ENVIRONMENT + ".yml";
+	if (ctx) {
+		var overrideProperties = "props."+ ctx + ".yml";
 		if (grunt.file.exists(overrideProperties)) {
 			properties = merge(properties, grunt.file.readYAML(overrideProperties));
 		}
